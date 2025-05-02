@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ssafy.trip.model.dao.User">
+<mapper namespace="com.ssafy.trip.model.dao.UserDao">
 
 	<resultMap id="userMap" type="com.ssafy.trip.model.dto.User">
 
