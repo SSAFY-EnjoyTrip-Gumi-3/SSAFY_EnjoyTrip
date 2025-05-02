@@ -17,6 +17,13 @@ import com.ssafy.trip.service.AreaService;
 import com.ssafy.trip.service.AttractionService;
 import com.ssafy.trip.service.ContentTypeService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -26,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/attraction")
 @Getter @Setter
+@Tag(name = "Attraction", description = "관광지·지역·콘텐츠 조회 API")
 @Slf4j
 public class AttractionController implements RestControllerHelper {
 	private final AttractionService attractionService;
@@ -37,6 +45,9 @@ public class AttractionController implements RestControllerHelper {
 	private final String keyData = "zUUH8MYcYzHqcPqEKVbqYbvc5yOe5J60W%2F3qpVd6Fy6lUyARl9gk%2F2JHqdeGDq2Dgocy1fkjwiaI3Rq0qGYC1A%3D%3D";
 	
 	/** 초기 데이터 조회: 시도 목록, 콘텐츠 타입, API 키 */
+	@Operation(summary = "초기 데이터 조회",
+             description = "시도 목록 · 콘텐츠 타입 목록 · 공공 API 키를 한 번에 가져옵니다.")
+	@ApiResponse(responseCode = "200", description = "성공적으로 초기 데이터를 반환")
     @GetMapping("/init")
     public ResponseEntity<InitResponse> init() {
         List<Sido> sidos = areaService.getSido();
@@ -49,6 +60,15 @@ public class AttractionController implements RestControllerHelper {
     }
 
     /** 특정 시도(sido)의 구군(gugun) 목록 조회 */
+	@Operation(
+		        summary = "구군 목록 조회",
+		        description = "시도 코드를 Path Variable로 받아 해당 시도의 구군 목록을 반환합니다."
+		    )
+		    @ApiResponses({
+		        @ApiResponse(responseCode = "200", description = "구군 목록 반환"),
+		        @ApiResponse(responseCode = "404", description = "시도 코드가 잘못된 경우")
+		    })
+		    @Parameter(name = "sidoCode", description = "시도 코드", example = "1")
     @GetMapping("/gugun/{sidoCode}")
     public ResponseEntity<List<Gugun>> getGugun(@PathVariable int sidoCode) {
         List<Gugun> guguns = areaService.getGugun(sidoCode);
@@ -56,6 +76,15 @@ public class AttractionController implements RestControllerHelper {
     }
 
     /** 시도, 구군, 콘텐츠 타입에 따른 관광지 검색 */
+	@Operation(
+	        summary = "관광지 검색",
+	        description = "시도·구군·콘텐츠 타입 조건으로 관광지 목록을 조회합니다."
+	    )
+	    @Parameters({
+	        @Parameter(name = "sidoCode",   description = "시도 코드",   example = "1"),
+	        @Parameter(name = "gugunCode",  description = "구군 코드",  example = "1"),
+	        @Parameter(name = "contentType",description = "콘텐츠 타입", example = "12")
+	    })
     @GetMapping("/search")
     public ResponseEntity<List<Attraction>> search(
             @RequestParam int sidoCode,
@@ -66,6 +95,7 @@ public class AttractionController implements RestControllerHelper {
         return ResponseEntity.ok(attractions);
     }
 
+	@Schema(name = "InitResponse", description = "초기 데이터 DTO")
     /** InitResponse: init API 호출 시 반환할 DTO */
     public static class InitResponse {
         private List<Sido> sidos;

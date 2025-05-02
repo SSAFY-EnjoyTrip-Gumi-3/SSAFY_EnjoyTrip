@@ -12,16 +12,26 @@ import com.ssafy.trip.model.dto.User;
 import com.ssafy.trip.model.dto.UserResponse;
 import com.ssafy.trip.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+@Tag(name = "Auth", description = "로그인 · 로그아웃 API")
 public class AuthController implements RestControllerHelper{
 	
 	private final UserService uService;
 	
+	@Operation(summary = "로그인", description = "ID·비밀번호로 로그인 후 세션에 사용자 정보를 저장합니다.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "로그인 성공"),
+        @ApiResponse(responseCode = "401", description = "아이디/비밀번호 불일치")
+    })
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody LoginDto req, HttpSession session){
 		try {
@@ -40,6 +50,7 @@ public class AuthController implements RestControllerHelper{
 		
 	}
 	
+	@Operation(summary = "로그아웃")
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpSession session) {
         session.invalidate();
