@@ -107,10 +107,10 @@ COLLATE = utf8mb4_0900_ai_ci
 COMMENT = '명소정보테이블';
 
 
+
 -- -----------------------------------------------------
 -- Table `ssafytrip`.`users`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `ssafytrip`.`users` (
+-- -----------------------------------------------------CREATE TABLE IF NOT EXISTS `ssafytrip`.`users` (
   `user_no` INT NOT NULL AUTO_INCREMENT,
   `id` VARCHAR(50) NOT NULL,
   `password` VARCHAR(100) NOT NULL,
@@ -121,14 +121,19 @@ CREATE TABLE IF NOT EXISTS `ssafytrip`.`users` (
   `birthdate` DATE NULL DEFAULT NULL,
   `gender` ENUM('M', 'F', 'OTHER') NULL DEFAULT NULL,
   `phonenum` VARCHAR(20) NULL DEFAULT NULL,
+  `status` ENUM('ACTIVE', 'INACTIVE', 'DELETED') DEFAULT 'ACTIVE' COMMENT '회원 상태',
   PRIMARY KEY (`user_no`),
   UNIQUE INDEX `id` (`id` ASC) VISIBLE,
   UNIQUE INDEX `email` (`email` ASC) VISIBLE,
-  INDEX `idx_user_id` (`id` ASC) VISIBLE)
+  INDEX `idx_user_id` (`id` ASC) VISIBLE
+)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
+
+select * from contenttypes;
+select * from users;
 
 -- -----------------------------------------------------
 -- Table `ssafytrip`.`hotplaces`
