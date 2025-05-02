@@ -44,4 +44,12 @@
 		select * from attractions
 		where attraction_no=#{attractionNo}
 	</select>
+	
+	<select id="getAttractionByAreaAndContentType" resultMap="attractionMap">
+		select *
+		from attractions
+		where area_code=#{areaCode}
+		and si_gun_gu_code=#{siGunGuCode}
+		and content_type_id=#{contentTypeId}
+	</select>
 </mapper>
