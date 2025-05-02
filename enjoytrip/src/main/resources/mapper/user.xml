@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.trip.model.dao.User">
+
+	<resultMap id="userMap" type="com.ssafy.trip.model.dto.User">
+
+    	<id     column="user_no"  property="userNo"/>
+
+    	<result column="id"        property="id"/>
+    	<result column="password"  property="password"/>
+
+   		<result column="email"     property="email"/>
+    	<result column="name"      property="name"/>
+    	<result column="birthdate" property="birthdate"/>
+    	<result column="gender"    property="gender"/>
+    	<result column="phonenum"  property="phonenum"/>
+
+    	<result column="role"      property="role"/>
+    	<result column="status"    property="status"/>
+    	<result column="regdate"   property="regdate"/>
+
+	</resultMap>
+	
+	<!-- ======================== INSERT ======================== -->
+    <insert id="insert" parameterType="com.ssafy.trip.model.dto.User"
+            useGeneratedKeys="true" keyProperty="userNo">
+        INSERT INTO users
+              (id, password, email, name,
+               birthdate, gender, phonenum,
+               role, status)
+        VALUES (#{id}, #{password}, #{email}, #{name},
+                #{birthdate}, #{gender}, #{phonenum},
+                #{role}, #{status})
+    </insert>
+
+    <!-- ======================== UPDATE (동적 PATCH) ======================== -->
+    <update id="update" parameterType="com.ssafy.trip.model.dto.User">
+        UPDATE users
+        <set>
+            <if test="password  != null"> password  = #{password},  </if>
+            <if test="email     != null"> email     = #{email},     </if>
+            <if test="name      != null"> name      = #{name},      </if>
+            <if test="birthdate != null"> birthdate = #{birthdate}, </if>
+            <if test="gender    != null"> gender    = #{gender},    </if>
+            <if test="phonenum  != null"> phonenum  = #{phonenum},  </if>
+            <if test="role      != null"> role      = #{role},      </if>
+            <if test="status    != null"> status    = #{status},    </if>
+        </set>
+        WHERE user_no = #{userNo}
+    </update>
+
+    <!-- ======================== SELECT ======================== -->
+    <select id="select" resultMap="userMap">
+        SELECT * FROM users WHERE id = #{id}
+    </select>
+
+    <!-- ======================== SOFT DELETE ======================== -->
+    <update id="delete">
+        UPDATE users
+        SET status = 'DELETED'
+        WHERE user_no = #{userNo}
+          AND status != 'DELETED'
+    </update>
+
+    <!-- ======================== EXISTS BY ID ======================== -->
+    <select id="existsById" resultType="boolean">
+        SELECT EXISTS (SELECT 1 FROM users WHERE id = #{id})
+    </select>
+
+    <!-- ======================== 휴면 / 복구 ======================== -->
+    <update id="deactivate">
+        UPDATE users SET status = 'INACTIVE'
+        WHERE user_no = #{userNo} AND status = 'ACTIVE'
+    </update>
+
+    <update id="activate">
+        UPDATE users SET status = 'ACTIVE'
+        WHERE user_no = #{userNo} AND status = 'INACTIVE'
+    </update>
+
+    <!-- ======================== 마지막 로그인 시각 ======================== -->
+    <update id="updateLastLogin">
+        UPDATE users SET regdate = NOW()
+        WHERE user_no = #{userNo}
+    </update>
+
+    <!-- ======================== LIST QUERIES ======================== -->
+    <select id="selectAll" resultMap="userMap">
+        SELECT * FROM users
+    </select>
+
+    <select id="selectInactiveUsers" resultMap="userMap">
+        SELECT * FROM users WHERE status = 'INACTIVE'
+    </select>
+
+    <select id="selectActiveUsers" resultMap="userMap">
+        SELECT * FROM users WHERE status = 'ACTIVE'
+    </select>
+
+    <select id="selectDeleteUsers" resultMap="userMap">
+        SELECT * FROM users WHERE status = 'DELETED'
+    </select>
+	
+	
+	
+</mapper>
