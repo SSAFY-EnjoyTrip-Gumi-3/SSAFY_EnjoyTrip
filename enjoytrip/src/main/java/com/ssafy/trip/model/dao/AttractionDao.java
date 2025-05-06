@@ -3,6 +3,7 @@ package com.ssafy.trip.model.dao;
 import java.util.*;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.ssafy.trip.model.dto.Attraction;
 
@@ -23,5 +24,8 @@ public interface AttractionDao {
     Attraction getAttractionByNo(int attractionNo);
     
     // 특정 지역 코드와 콘텐츠 타입별로 관광지를 조회하는 메서드
-    List<Attraction> getAttractionByAreaAndContentType(int sidoCode, int gugunCode, int contentType);
+    List<Attraction> getAttractionByAreaAndContentType( 
+    		@Param("areaCode")      int sidoCode,
+    	    @Param("siGunGuCode")   int gugunCode,
+    	    @Param("contentTypeId") int contentType);
 }

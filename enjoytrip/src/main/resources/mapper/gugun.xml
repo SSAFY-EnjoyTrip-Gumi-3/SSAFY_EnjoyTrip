@@ -2,10 +2,17 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssafy.trip.model.dao.GugunDao">
+
+	<resultMap id="GugunMap" type="com.ssafy.trip.model.dto.Gugun">
+		<id     property="no"         column="no"/>
+  		<result property="sidoCode"   column="sido_code"/>
+  		<result property="gugunCode"  column="gugun_code"/>
+  		<result property="gugunName"  column="gugun_name"/>
+	</resultMap>
 	
-	<select id="getBySido">
+	<select id="getBySido" parameterType="int" resultMap="GugunMap">
 		select * 
 		from guguns
-		where sido_code=#{sido_code}
+		where sido_code=#{sidoCode}
 	</select>
 </mapper>

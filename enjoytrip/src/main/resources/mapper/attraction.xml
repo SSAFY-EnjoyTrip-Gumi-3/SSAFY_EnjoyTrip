@@ -10,15 +10,15 @@
 	<result column="content_type_id" property="contentTypeId"/>
 	<result column="area_code" property="areaCode"/>
 	<result column="si_gun_gu_code" property="siGunGuCode"/>
-	<result column="first_image1" property="firstImage1"/>
-	<result column="first_image2" property="firstImage2"/>
+	<result column="image1" property="image1"/>
+	<result column="image2" property="image2"/>
 	<result column="map_level" property="mapLevel"/>
 	<result column="latitude" property="latitude"/>
 	<result column="longitude" property="longitude"/>
 	<result column="tel" property="tel"/>
 	<result column="addr1" property="addr1"/>
 	<result column="addr2" property="addr2"/>
-	<result column="homepage" property="bomepage"/>
+	<result column="homepage" property="homepage"/>
 	<result column="overview" property="overview"/>
 	</resultMap>
 	
@@ -28,7 +28,7 @@
 	</insert>
 	
 	<select id="getAttractionByArea" resultMap="attractionMap">
-		select attraction_no, content_id, content_type_id, area_code, si_gun_gu_code, title, first_image1, first_image2, map_level, latitude, longitude, tel, addr1, addr2, homepage, overview
+		select attraction_no, content_id, content_type_id, area_code, si_gun_gu_code, title, image1, image2, map_level, latitude, longitude, tel, addr1, addr2, homepage, overview
 		from attractions
 		where si_gun_gu_code=#{siGunGuCode}
 		and area_code=#{areaCode}
