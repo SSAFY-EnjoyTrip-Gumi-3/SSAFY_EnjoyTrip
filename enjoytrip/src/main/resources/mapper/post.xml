@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.trip.model.dao.PostDao">
+
+    <!-- 게시글 상세 조회용 ResultMap -->
+    <resultMap id="postMap" type="com.ssafy.trip.model.dto.Post">
+        <id property="postNo" column="post_no" />
+        <result property="userId" column="user_id" />
+        <result property="title" column="title" />
+        <result property="content" column="content" />
+        <result property="postType" column="post_type" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+        <result property="isDeleted" column="is_deleted" />
+    </resultMap>
+
+    <!-- 게시글 목록 조회용 ResultMap -->
+    <resultMap id="postListMap" type="com.ssafy.trip.model.dto.PostList">
+        <id property="postNo" column="post_no" />
+        <result property="title" column="title" />
+        <result property="writer" column="user_id" />
+        <result property="createdAt" column="created_at" />
+    </resultMap>
+
+    <!-- 게시글 전체 목록 (is_deleted = 0) -->
+    <select id="getAllPosts" resultMap="postListMap">
+        SELECT post_no, title, user_id, created_at
+        FROM posts
+        WHERE is_deleted = 0
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 게시글 상세 조회 -->
+    <select id="getPostById" resultMap="postMap">
+        SELECT *
+        FROM posts
+        WHERE post_no = #{postId}
+    </select>
+
+    <!-- 게시글 등록 -->
+    <insert id="insertPost" parameterType="Post" useGeneratedKeys="true" keyProperty="postNo">
+        INSERT INTO posts (user_id, title, content, post_type)
+        VALUES (#{userId}, #{title}, #{content}, #{postType})
+    </insert>
+
+    <!-- 게시글 수정 -->
+    <update id="updatePost" parameterType="Post">
+        UPDATE posts
+        SET title = #{title}, content = #{content}, updated_at = CURRENT_TIMESTAMP
+        WHERE post_no = #{postNo} AND is_deleted = 0
+    </update>
+
+    <!-- 게시글 논리 삭제 -->
+    <update id="logicalDeletePost">
+        UPDATE posts
+        SET is_deleted = 1, updated_at = CURRENT_TIMESTAMP
+        WHERE post_no = #{postId}
+    </update>
+
+</mapper>

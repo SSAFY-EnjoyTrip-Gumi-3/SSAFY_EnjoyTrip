@@ -41,113 +41,90 @@ public class UserController implements RestControllerHelper{
         @ApiResponse(responseCode = "201", description = "가입 성공"),
         @ApiResponse(responseCode = "409", description = "ID 중복")
     })
+	
 	@PostMapping("/me")
-	public ResponseEntity<?> register(@Valid @RequestBody SignupRequest req){
-		try {
-			User user = User.builder()
-								.id(req.getId())
-								.password(req.getPassword())
-								.email(req.getEmail())
-								.name(req.getName())
-								.birthdate(req.getBirthdate())
-								.gender(req.getGender())
-								.phonenum(req.getPhonenum())
-								.role("USER")
-								.status("ACTIVE")
-								.build();
-			
+	public ResponseEntity<?> register(@Valid @RequestBody SignupRequest req) {
+	    User user = User.builder()
+	            .id(req.getId())
+	            .password(req.getPassword())
+	            .email(req.getEmail())
+	            .name(req.getName())
+	            .birthdate(req.getBirthdate())
+	            .gender(req.getGender())
+	            .phonenum(req.getPhonenum())
+	            .role("USER")
+	            .status("ACTIVE")
+	            .build();
 
-			uService.registUser(user);
-			
-			UserResponse res = UserResponse.builder()
-					.id(user.getId())
-					.name(user.getName())
-					.email(user.getEmail())
-					.userNo(user.getUserNo())
-					.build();
-			
-			return handleSuccess(res, HttpStatus.CREATED);
-		}catch(DuplicateIdException e) {
-			return handleFail(e, HttpStatus.CONFLICT);
-		}catch(Exception e) {
-			return handleFail(e);
-		}
+	    uService.registUser(user); // 중복 ID면 DuplicateIdException 발생
+
+	    UserResponse res = UserResponse.builder()
+	            .id(user.getId())
+	            .name(user.getName())
+	            .email(user.getEmail())
+	            .userNo(user.getUserNo())
+	            .build();
+
+	    return handleSuccess(res, HttpStatus.CREATED);
 	}
+
 	
 	@Operation(summary = "내 정보 수정", description = "세션 로그인 사용자 기준으로 일부 정보(PATCH) 수정")
     @ApiResponse(responseCode = "200", description = "수정 완료")
 	@PutMapping("/me")
-	public ResponseEntity<?> update(@Valid @RequestBody UpdateRequest req,
-			HttpSession session){
-		
-		UserResponse loginUser = (UserResponse) session.getAttribute("loginUser");
-		
-		if(loginUser==null) {
-			return handleFail(new AuthException("로그인이 필요합니다."), HttpStatus.UNAUTHORIZED);
-		}
-	    
-	    int userNo = loginUser.getUserNo();
+	public ResponseEntity<?> update(@Valid @RequestBody UpdateRequest req, HttpSession session) {
+	    UserResponse loginUser = (UserResponse) session.getAttribute("loginUser");
+	    if (loginUser == null) throw new AuthException("로그인이 필요합니다.");
 
-		User user = User.builder()
-				.userNo(userNo)
-				.password(req.getPassword())
-				.email(req.getEmail())
-				.name(req.getName())
-				.birthdate(req.getBirthdate())
-				.gender(req.getGender())
-				.phonenum(req.getPhonenum())
-				.build();
-		
-		uService.updateUser(user);
-		
-		User updatedUser = uService.getUser(user.getId());
-		
-		UserResponse res = UserResponse.builder()
-				.id(updatedUser.getId())
-				.name(updatedUser.getName())
-				.email(updatedUser.getEmail())
-				.userNo(updatedUser.getUserNo())
-				.build();
-		
-		session.setAttribute("loginUser", res);
-		
-		return handleSuccess(res);
+	    int userNo = loginUser.getUserNo();
+	    User user = User.builder()
+	            .userNo(userNo)
+	            .password(req.getPassword())
+	            .email(req.getEmail())
+	            .name(req.getName())
+	            .birthdate(req.getBirthdate())
+	            .gender(req.getGender())
+	            .phonenum(req.getPhonenum())
+	            .build();
+
+	    uService.updateUser(user);
+
+	    User updatedUser = uService.getUser(user.getId());
+
+	    UserResponse res = UserResponse.builder()
+	            .id(updatedUser.getId())
+	            .name(updatedUser.getName())
+	            .email(updatedUser.getEmail())
+	            .userNo(updatedUser.getUserNo())
+	            .build();
+
+	    session.setAttribute("loginUser", res);
+	    return handleSuccess(res);
 	}
+
 	
 	@Operation(summary = "내 정보 조회")
     @ApiResponse(responseCode = "200", description = "로그인 사용자의 프로필 반환")
 	@GetMapping("/me")
-	public ResponseEntity<?> detail(HttpSession session){
-
-		UserResponse loginUser = (UserResponse) session.getAttribute("loginUser");
-		
-		if(loginUser==null) {
-			return handleFail(new AuthException("로그인이 필요합니다."), HttpStatus.UNAUTHORIZED);
-		}
-		return handleSuccess(loginUser);
-
+	public ResponseEntity<?> detail(HttpSession session) {
+	    UserResponse loginUser = (UserResponse) session.getAttribute("loginUser");
+	    if (loginUser == null) throw new AuthException("로그인이 필요합니다.");
+	    return handleSuccess(loginUser);
 	}
+
 	
 	@Operation(summary = "회원 탈퇴", description = "status='DELETED' 로 소프트 삭제 후 세션 만료")
     @ApiResponse(responseCode = "204", description = "탈퇴 완료")
 	@DeleteMapping("/me")
 	public ResponseEntity<?> delete(HttpSession session) {
+	    UserResponse loginUser = (UserResponse) session.getAttribute("loginUser");
+	    if (loginUser == null) throw new AuthException("로그인이 필요합니다.");
 
-	    UserResponse loginUser =
-	            (UserResponse) session.getAttribute("loginUser");
-
-	    if (loginUser == null) {
-	        return handleFail(
-	                new AuthException("로그인이 필요합니다."),
-	                HttpStatus.UNAUTHORIZED);          // 401
-	    }
-
-	    int userNo = loginUser.getUserNo();
-	    uService.deleteUser(userNo);                // soft-delete (status='DELETED')
-
-	    session.invalidate();                          // 세션 만료
-	    return ResponseEntity.noContent().build();     // 204 No Content
+	    uService.deleteUser(loginUser.getUserNo());
+	    session.invalidate();
+	    return ResponseEntity.noContent().build();
 	}
+
 	
 	
 }
