@@ -1,5 +1,7 @@
 package com.ssafy.trip.model.dto;
 
+import java.util.List;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +25,7 @@ public class Attraction {
     private int contentId;
 
     @Schema(description = "콘텐츠 타입 ID (12=관광지·14=문화시설…)", example = "12")
-    private int contentTypeId;
+    private int contentType;
 
     @Schema(description = "시·도 코드", example = "1")
     private int areaCode;
