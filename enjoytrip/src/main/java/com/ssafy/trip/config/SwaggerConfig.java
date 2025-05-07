@@ -14,7 +14,7 @@ public class SwaggerConfig {
     // 관련된 API들의 grouping
     @Bean
     GroupedOpenApi attractionOpenApi() {
-        String[] paths = { "/api/v1/attraction/**" };
+        String[] paths = { "/api/v1/attractions/**" };
         return GroupedOpenApi.builder().group("Attraction 관련 API").pathsToMatch(paths).build();
     }
 
