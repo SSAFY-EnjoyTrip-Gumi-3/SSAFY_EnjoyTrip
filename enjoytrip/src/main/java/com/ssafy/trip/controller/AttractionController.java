@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.trip.config.ApiKeyPropertiesConfig;
 import com.ssafy.trip.model.dto.Attraction;
 import com.ssafy.trip.model.dto.ContentType;
 import com.ssafy.trip.model.dto.Gugun;
+import com.ssafy.trip.model.dto.InitResponse;
 import com.ssafy.trip.model.dto.Sido;
 import com.ssafy.trip.service.AreaService;
 import com.ssafy.trip.service.AttractionService;
@@ -40,25 +42,25 @@ public class AttractionController implements RestControllerHelper {
 	private final AttractionService attractionService;
 	private final ContentTypeService contentService;
 	private final AreaService areaService;
-	private final String keyVworld = "7E7EFCBE-1F93-343B-8A9A-8868B3362160";
-	private final String keySgisServiceId = "fd992959b88b4572ad31";
-	private final String keySgisSecurity = "4b8165f5b0704ff88a32";
-	private final String keyData = "zUUH8MYcYzHqcPqEKVbqYbvc5yOe5J60W%2F3qpVd6Fy6lUyARl9gk%2F2JHqdeGDq2Dgocy1fkjwiaI3Rq0qGYC1A%3D%3D";
+	private final ApiKeyPropertiesConfig apiKeys;
 	
-//	/** 초기 데이터 조회: 시도 목록, 콘텐츠 타입, API 키 */
-//	@Operation(summary = "초기 데이터 조회",
-//             description = "시도 목록 · 콘텐츠 타입 목록 · 공공 API 키를 한 번에 가져옵니다.")
-//	@ApiResponse(responseCode = "200", description = "성공적으로 초기 데이터를 반환")
-//    @GetMapping("/init")
-//    public ResponseEntity<InitResponse> init() {
-//        List<Sido> sidos = areaService.getSido();
-//        List<ContentType> types = contentService.getAll();
-//        InitResponse resp = new InitResponse(
-//            sidos, types,
-//            keyVworld, keySgisServiceId, keySgisSecurity, keyData
-//        );
-//        return ResponseEntity.ok(resp);
-//    }
+	/** 초기 데이터 조회: 시도 목록, 콘텐츠 타입, API 키 */
+	 @Operation(summary = "초기 데이터 조회",
+             description = "시도 목록 · 콘텐츠 타입 목록 · 공공 API 키를 한 번에 가져옵니다.")
+  @ApiResponse(responseCode = "200", description = "성공적으로 초기 데이터를 반환")
+  @GetMapping("/init")
+  public ResponseEntity<InitResponse> init() {
+      List<Sido> sidos = areaService.getSido();
+      List<ContentType> types = contentService.getAll();
+      InitResponse resp = new InitResponse(
+          sidos, types,
+          apiKeys.getVworldKey(),
+          apiKeys.getServiceId(),
+          apiKeys.getSecurity(),
+          apiKeys.getDataKey()
+      );
+      return ResponseEntity.ok(resp);
+  }
 	
 	/** 특정 시도와 구군에 따른 관광지 목록 조회 */
 	@Operation(
@@ -117,26 +119,4 @@ public class AttractionController implements RestControllerHelper {
             attractionService.getAttractionByAreaAndContentType(sidoCode, gugunCode, contentTypes);
         return ResponseEntity.ok(attractions);
     }
-
-//	@Schema(name = "InitResponse", description = "초기 데이터 DTO")
-//    /** InitResponse: init API 호출 시 반환할 DTO */
-//    public static class InitResponse {
-//        private List<Sido> sidos;
-//        private List<ContentType> contentTypes;
-//        private String keyVworld;
-//        private String keySgisServiceId;
-//        private String keySgisSecurity;
-//        private String keyData;
-//
-//        public InitResponse(List<Sido> sidos, List<ContentType> contentTypes,
-//                            String keyVworld, String keySgisServiceId,
-//                            String keySgisSecurity, String keyData) {
-//            this.sidos = sidos;
-//            this.contentTypes = contentTypes;
-//            this.keyVworld = keyVworld;
-//            this.keySgisServiceId = keySgisServiceId;
-//            this.keySgisSecurity = keySgisSecurity;
-//            this.keyData = keyData;
-//        }
-//    }
 }
