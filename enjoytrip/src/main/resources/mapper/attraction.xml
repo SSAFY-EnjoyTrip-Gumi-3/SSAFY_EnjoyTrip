@@ -7,11 +7,11 @@
 	<id column="attraction_no" property="attractionNo"/>
 	<result column="content_id" property="contentId"/>
 	<result column="title" property="title"/>
-	<result column="content_type_id" property="contentTypeId"/>
+	<result column="content_type_id" property="contentType"/>
 	<result column="area_code" property="areaCode"/>
 	<result column="si_gun_gu_code" property="siGunGuCode"/>
-	<result column="image1" property="image1"/>
-	<result column="image2" property="image2"/>
+	<result column="first_image1" property="image1"/>
+	<result column="first_image2" property="image2"/>
 	<result column="map_level" property="mapLevel"/>
 	<result column="latitude" property="latitude"/>
 	<result column="longitude" property="longitude"/>
@@ -23,12 +23,12 @@
 	</resultMap>
 	
 	<insert id="insertAttraction" useGeneratedKeys="true">
-		INSERT INTO attractions (attraction_no, content_id, content_type_id, area_code, si_gun_gu_code, title, image1, image2, map_level, latitude, longitude, tel, addr1, addr2, homepage, overview)
-		VALUES (#{attractionNo}, #{contentId}, #{contentTypeId}, #{areaCode}, #{siGunGuCode}, #{title}, #{image1}, #{image2}, #{mapLevel}, #{latitude}, #{longitude}, #{tel}, #{addr1}, #{addr2}, #{homepage}, #{overview});
+		INSERT INTO attractions (attraction_no, content_id, content_type_id, area_code, si_gun_gu_code, title, first_image1, first_image2, map_level, latitude, longitude, tel, addr1, addr2, homepage, overview)
+		VALUES (#{attractionNo}, #{contentId}, #{contentTypeId}, #{areaCode}, #{siGunGuCode}, #{title}, #{firstImage1}, #{firstImage2}, #{mapLevel}, #{latitude}, #{longitude}, #{tel}, #{addr1}, #{addr2}, #{homepage}, #{overview});
 	</insert>
 	
 	<select id="getAttractionByArea" resultMap="attractionMap">
-		select attraction_no, content_id, content_type_id, area_code, si_gun_gu_code, title, image1, image2, map_level, latitude, longitude, tel, addr1, addr2, homepage, overview
+		select attraction_no, content_id, content_type_id, area_code, si_gun_gu_code, title, first_image1, first_image2, map_level, latitude, longitude, tel, addr1, addr2, homepage, overview
 		from attractions
 		where si_gun_gu_code=#{siGunGuCode}
 		and area_code=#{areaCode}
@@ -50,6 +50,15 @@
 		from attractions
 		where area_code=#{areaCode}
 		and si_gun_gu_code=#{siGunGuCode}
-		and content_type_id=#{contentTypeId}
+		 <if test="contentTypeIds != null and contentTypeIds.size() &gt; 0">
+       		and content_type_id IN
+       	<foreach collection="contentTypeIds"
+                item="type"
+                open="("
+                close=")"
+                separator=",">
+         #{type}
+       	</foreach>
+     </if>
 	</select>
 </mapper>
