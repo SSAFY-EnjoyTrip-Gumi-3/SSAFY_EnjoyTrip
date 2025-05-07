@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>대한민국 지도</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    .region {
+      fill: #ccc;
+      stroke: #666;
+      stroke-width: 1;
+      transition: all 0.2s ease;
+      transform-origin: center;
+    }
+    .region.hovered {
+      fill: #3b82f6;
+      stroke: #1d4ed8;
+      z-index: 1;
+    }
+    #map {
+      overflow: visible;
+    }
+  </style>
+</head>
+<body>
+  <h2>한국 시도 지도</h2>
+  <svg id="map" width="800" height="1000" style="overflow: visible;"></svg>
+
+  <script>
+  const width = 800, height = 1000;
+    const svg = d3.select("#map")
+      .attr("viewBox", `0 0 ${width} ${height}`)
+      .attr("preserveAspectRatio", "xMidYMid meet");
+    
+    d3.json("TL_SCCO_CTPRVN.json").then(data => {
+      const projection = d3.geoMercator()
+        .fitSize([width, height], data);
+    
+      const path = d3.geoPath().projection(projection);
+    
+      svg.selectAll("path")
+        .data(data.features)
+        .enter()
+        .append("path")
+        .attr("d", path)
+        .attr("class", "region")
+        .on("mouseover", function () {
+          d3.select(this)
+            .classed("hovered", true)
+            .raise(); // 호버된 요소를 최상위로 올림
+        })
+        .on("mouseout", function () {
+          d3.select(this)
+            .classed("hovered", false);
+        })
+        .on("click", function (event, d) {
+          const areaName = d.properties.CTP_KOR_NM;
+          fetch(`https://your-api.com/region?name=${areaName}`)
+            .then(res => res.json())
+            .then(data => console.log("API Response:", data));
+        });
+    });
+  </script>
+</body>
+</html>
