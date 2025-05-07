@@ -15,5 +15,5 @@ public interface AttractionService {
     List<Attraction> getAttractionByContentType(int contentNo);
     
  // 특정 지역과 콘텐츠 타입별로 관광지 정보를 가져오는 메서드
-    List<Attraction> getAttractionByAreaAndContentType(int sidoCode, int gugunCode, int contentType);
+    List<Attraction> getAttractionByAreaAndContentType(int sidoCode, int gugunCode, List<Integer> contentTypes);
 }

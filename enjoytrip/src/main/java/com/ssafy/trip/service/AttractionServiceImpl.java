@@ -24,9 +24,8 @@ public class AttractionServiceImpl implements AttractionService{
 		return aDao.getAttractionByNo(attractionNo);
 	}
 	
-	@Override
-	public List<Attraction> getAttractionByAreaAndContentType(int sidoCode, int gugunCode, int contentType) {
-		return aDao.getAttractionByAreaAndContentType(sidoCode, gugunCode, contentType);
+	public List<Attraction> getAttractionByAreaAndContentType(int sidoCode, int gugunCode, List<Integer> contentTypes) {
+		return aDao.getAttractionByAreaAndContentType(sidoCode, gugunCode, contentTypes);
 	}
 	
 	@Override
