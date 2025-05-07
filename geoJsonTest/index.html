@@ -1,65 +1,318 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-  <meta charset="UTF-8" />
-  <title>대한민국 지도</title>
-  <script src="https://d3js.org/d3.v7.min.js"></script>
-  <style>
-    .region {
-      fill: #ccc;
-      stroke: #666;
-      stroke-width: 1;
-      transition: all 0.2s ease;
-      transform-origin: center;
-    }
-    .region.hovered {
-      fill: #3b82f6;
-      stroke: #1d4ed8;
-      z-index: 1;
-    }
-    #map {
-      overflow: visible;
-    }
-  </style>
-</head>
-<body>
-  <h2>한국 시도 지도</h2>
-  <svg id="map" width="800" height="1000" style="overflow: visible;"></svg>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>한국 지역 선택</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+      #map {
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .region {
+        fill: #ccc;
+        stroke: #fff;
+        stroke-width: 1px;
+        cursor: pointer;
+        transition: fill 0.3s;
+      }
+      .region.hovered {
+        fill: #3b82f6;
+      }
+      .region.selected {
+        fill: #2563eb;
+      }
+      #subregion-container {
+        display: none;
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+      }
+      .subregion-btn {
+        margin: 5px;
+        padding: 8px 16px;
+        background-color: #f3f4f6;
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .subregion-btn:hover {
+        background-color: #e5e7eb;
+      }
+      .subregion-btn.selected {
+        background-color: #3b82f6;
+        color: white;
+      }
+      .action-buttons {
+        margin-top: 20px;
+        text-align: center;
+      }
+      .action-btn {
+        padding: 10px 20px;
+        background-color: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin: 0 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 style="text-align: center">지역을 선택하세요</h1>
+    <div id="map"></div>
+    <div id="subregion-container">
+      <h2 id="selected-region-title">세부 지역 선택</h2>
+      <div id="subregion-list"></div>
+      <div class="action-buttons">
+        <button id="skip-btn" class="action-btn">
+          세부 지역 선택 없이 계속
+        </button>
+        <button id="continue-btn" class="action-btn" disabled>
+          선택한 세부 지역으로 계속
+        </button>
+      </div>
+    </div>
 
-  <script>
-  const width = 800, height = 1000;
-    const svg = d3.select("#map")
-      .attr("viewBox", `0 0 ${width} ${height}`)
-      .attr("preserveAspectRatio", "xMidYMid meet");
-    
-    d3.json("TL_SCCO_CTPRVN.json").then(data => {
-      const projection = d3.geoMercator()
-        .fitSize([width, height], data);
-    
-      const path = d3.geoPath().projection(projection);
-    
-      svg.selectAll("path")
-        .data(data.features)
-        .enter()
-        .append("path")
-        .attr("d", path)
-        .attr("class", "region")
-        .on("mouseover", function () {
-          d3.select(this)
-            .classed("hovered", true)
-            .raise(); // 호버된 요소를 최상위로 올림
+    <script>
+      const width = 800,
+        height = 1000;
+      const svg = d3
+        .select("#map")
+        .append("svg")
+        .attr("viewBox", `0 0 ${width} ${height}`)
+        .attr("preserveAspectRatio", "xMidYMid meet");
+
+      let selectedRegion = null;
+      let selectedSubregion = null;
+
+      // GeoJSON 데이터 로드
+      d3.json("TL_SCCO_CTPRVN.json")
+        .then((data) => {
+          const projection = d3.geoMercator().fitSize([width, height], data);
+
+          const path = d3.geoPath().projection(projection);
+
+          svg
+            .selectAll("path")
+            .data(data.features)
+            .enter()
+            .append("path")
+            .attr("d", path)
+            .attr("class", "region")
+            .on("mouseover", function () {
+              d3.select(this).classed("hovered", true).raise();
+            })
+            .on("mouseout", function () {
+              d3.select(this).classed("hovered", function () {
+                return d3.select(this).classed("selected");
+              });
+            })
+            .on("click", function (event, d) {
+              // 이전에 선택된 지역의 선택 상태 제거
+              svg
+                .selectAll(".region")
+                .classed("selected", false)
+                .classed("hovered", false);
+
+              // 현재 선택된 지역 표시
+              d3.select(this)
+                .classed("selected", true)
+                .classed("hovered", true)
+                .raise();
+
+              const areaName = d.properties.CTP_KOR_NM;
+              selectedRegion = {
+                name: areaName,
+                code: d.properties.CTPRVN_CD,
+              };
+
+              // 세부 지역 정보 가져오기
+              fetchSubregions(selectedRegion.code);
+            });
         })
-        .on("mouseout", function () {
-          d3.select(this)
-            .classed("hovered", false);
-        })
-        .on("click", function (event, d) {
-          const areaName = d.properties.CTP_KOR_NM;
-          fetch(`https://your-api.com/region?name=${areaName}`)
-            .then(res => res.json())
-            .then(data => console.log("API Response:", data));
+        .catch((error) => {
+          console.error("데이터 로딩 오류:", error);
         });
-    });
-  </script>
-</body>
+
+      // 세부 지역 정보 가져오기
+      function fetchSubregions(regionCode) {
+        // 실제로는 API 호출이 필요하지만, 예시로 더미 데이터 사용
+        const dummySubregions = {
+          11: [
+            "종로구",
+            "중구",
+            "용산구",
+            "성동구",
+            "광진구",
+            "동대문구",
+            "중랑구",
+            "성북구",
+          ],
+          26: [
+            "중구",
+            "서구",
+            "동구",
+            "영도구",
+            "부산진구",
+            "동래구",
+            "남구",
+            "북구",
+          ],
+          27: ["중구", "동구", "서구", "남구", "북구", "수성구", "달서구"],
+          28: [
+            "중구",
+            "동구",
+            "미추홀구",
+            "연수구",
+            "남동구",
+            "부평구",
+            "계양구",
+          ],
+          29: ["중구", "동구", "서구", "남구", "북구", "광산구"],
+          30: ["동구", "중구", "서구", "유성구", "대덕구"],
+          31: ["중구", "남구", "동구", "북구", "울주군"],
+          36: ["세종특별자치시"],
+          41: [
+            "수원시",
+            "성남시",
+            "의정부시",
+            "안양시",
+            "부천시",
+            "광명시",
+            "평택시",
+            "동두천시",
+          ],
+          42: [
+            "춘천시",
+            "원주시",
+            "강릉시",
+            "동해시",
+            "태백시",
+            "속초시",
+            "삼척시",
+          ],
+          43: [
+            "청주시",
+            "충주시",
+            "제천시",
+            "보은군",
+            "옥천군",
+            "영동군",
+            "진천군",
+          ],
+          44: [
+            "천안시",
+            "공주시",
+            "보령시",
+            "아산시",
+            "서산시",
+            "논산시",
+            "계룡시",
+          ],
+          45: [
+            "전주시",
+            "군산시",
+            "익산시",
+            "정읍시",
+            "남원시",
+            "김제시",
+            "완주군",
+          ],
+          46: [
+            "목포시",
+            "여수시",
+            "순천시",
+            "나주시",
+            "광양시",
+            "담양군",
+            "곡성군",
+          ],
+          47: [
+            "포항시",
+            "경주시",
+            "김천시",
+            "안동시",
+            "구미시",
+            "영주시",
+            "영천시",
+          ],
+          48: [
+            "창원시",
+            "진주시",
+            "통영시",
+            "사천시",
+            "김해시",
+            "밀양시",
+            "거제시",
+          ],
+          50: ["제주시", "서귀포시"],
+        };
+
+        const subregions = dummySubregions[regionCode] || [];
+        displaySubregions(selectedRegion.name, subregions);
+      }
+
+      // 세부 지역 목록 표시
+      function displaySubregions(regionName, subregions) {
+        const container = document.getElementById("subregion-container");
+        const title = document.getElementById("selected-region-title");
+        const list = document.getElementById("subregion-list");
+
+        title.textContent = `${regionName} 세부 지역 선택`;
+        list.innerHTML = "";
+
+        // 세부 지역 버튼 생성
+        subregions.forEach((subregion) => {
+          const btn = document.createElement("button");
+          btn.className = "subregion-btn";
+          btn.textContent = subregion;
+          btn.onclick = function () {
+            // 이전에 선택된 버튼 선택 해제
+            document
+              .querySelectorAll(".subregion-btn.selected")
+              .forEach((el) => {
+                el.classList.remove("selected");
+              });
+
+            // 현재 버튼 선택
+            this.classList.add("selected");
+            selectedSubregion = subregion;
+
+            // 계속 버튼 활성화
+            document.getElementById("continue-btn").disabled = false;
+          };
+          list.appendChild(btn);
+        });
+
+        // 컨테이너 표시
+        container.style.display = "block";
+
+        // 버튼 이벤트 설정
+        document.getElementById("skip-btn").onclick = function () {
+          navigateToMapPage(selectedRegion.name);
+        };
+
+        document.getElementById("continue-btn").onclick = function () {
+          navigateToMapPage(selectedRegion.name, selectedSubregion);
+        };
+      }
+
+      // 지도 페이지로 이동
+      function navigateToMapPage(region, subregion = null) {
+        const params = new URLSearchParams();
+        params.append("region", region);
+        if (subregion) {
+          params.append("subregion", subregion);
+        }
+
+        // 실제 구현에서는 페이지 이동
+        window.location.href = `map.html?${params.toString()}`;
+      }
+    </script>
+  </body>
 </html>
