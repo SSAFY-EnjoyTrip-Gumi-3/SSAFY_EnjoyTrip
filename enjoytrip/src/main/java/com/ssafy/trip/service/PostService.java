@@ -34,13 +34,15 @@ public interface PostService {
     /**
      * 게시글 내용을 수정합니다.
      * @param post 수정할 게시글 정보 (postId, title, content 포함)
+     * @param userNo 해당 게시글의 유저 정보 (PK)
      */
-    int updatePost(Post post);
+    int updatePost(Post post, int userNo);
 
     /**
      * 게시글을 논리적으로 삭제합니다.
      * 실제 삭제하지 않고 is_deleted 플래그만 1로 변경합니다.
      * @param postId 삭제할 게시글의 ID
+     * @param userNo 해당 게시글의 유저 정보 (PK)
      */
-    int deletePost(int postNo);
+    int deletePost(int postNo, int userNo);
 }

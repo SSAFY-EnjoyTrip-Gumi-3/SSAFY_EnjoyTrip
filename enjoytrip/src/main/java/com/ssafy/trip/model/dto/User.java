@@ -1,6 +1,8 @@
 /* ───────────── User 엔터티 DTO ───────────── */
 package com.ssafy.trip.model.dto;
 
+import java.time.LocalDateTime;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,7 +46,7 @@ public class User {
     private String role;
 
     @Schema(description = "가입일시", example = "2025-05-02 14:30:11")
-    private String regdate;
+    private LocalDateTime regdate;
 
     @Schema(description = "계정 상태", example = "ACTIVE")
     private String status;

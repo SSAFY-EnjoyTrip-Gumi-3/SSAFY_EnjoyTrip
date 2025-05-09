@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.ssafy.trip.exception.AccessDeniedException;
 import com.ssafy.trip.exception.AuthException;
 import com.ssafy.trip.exception.DuplicateIdException;
 import com.ssafy.trip.exception.RecordNotFoundException;
@@ -36,6 +37,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(createFailResponse("서버 오류가 발생했습니다."));
     }
+    
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<?> handleAccessDenied(AccessDeniedException e) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(createFailResponse(e.getMessage()));
+    }
 
     // 공통 실패 응답 포맷 생성
     private static Object createFailResponse(String message) {
@@ -45,3 +53,4 @@ public class GlobalExceptionHandler {
         }};
     }
 }
+	
