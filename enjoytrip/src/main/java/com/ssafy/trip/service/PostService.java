@@ -23,7 +23,7 @@ public interface PostService {
      * @param postId 조회할 게시글의 ID
      * @return 게시글 정보 + 댓글 리스트 포함된 Post 객체
      */
-    Post getPostWithComments(int postId);
+    Post getPostWithComments(int postNo);
 
     /**
      * 새로운 게시글을 등록합니다.
@@ -42,5 +42,5 @@ public interface PostService {
      * 실제 삭제하지 않고 is_deleted 플래그만 1로 변경합니다.
      * @param postId 삭제할 게시글의 ID
      */
-    int deletePost(int postId);
+    int deletePost(int postNo);
 }

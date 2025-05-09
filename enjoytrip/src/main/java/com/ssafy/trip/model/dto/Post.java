@@ -16,10 +16,10 @@ public class Post {
     private int postNo;
 
     @Schema(description = "작성자 유저 번호 (FK)", example = "5")
-    private int userId;
+    private int userNo;
 
     @Schema(description = "작성자 이름 (조인된 결과용)", example = "김싸피")
-    private String authorName;
+    private String writer;
 
     @Schema(description = "게시글 제목", example = "제주도 여행 후기")
     private String title;

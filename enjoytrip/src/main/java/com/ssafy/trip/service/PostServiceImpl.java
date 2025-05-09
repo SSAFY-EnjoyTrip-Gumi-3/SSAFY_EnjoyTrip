@@ -28,13 +28,13 @@ public class PostServiceImpl implements PostService{
 	}
 
 	@Override
-	public Post getPostWithComments(int postId) {
-		Post post = pDao.getPostById(postId);
+	public Post getPostWithComments(int postNo) {
+		Post post = pDao.getPostByPostNo(postNo);
 		
 		if(post==null || post.isDeleted()) {
 			throw new RecordNotFoundException("존재하지 않거나 삭제된 게시글입니다.");
 		}
-		List<CommentResponse> comments = cDao.getCommentsByPostId(postId);
+		List<CommentResponse> comments = cDao.getCommentsByPostNo(postNo);
 		post.setComments(comments);
 		
 		return post;
@@ -49,7 +49,7 @@ public class PostServiceImpl implements PostService{
 	@Override
 	@Transactional
 	public int updatePost(Post post) {
-	    Post existing = pDao.getPostById(post.getPostNo());
+	    Post existing = pDao.getPostByPostNo(post.getPostNo());
 	    if (existing == null || existing.isDeleted()) {
 	        throw new RecordNotFoundException("존재하지 않거나 삭제된 게시글입니다.");
 	    }
@@ -58,12 +58,12 @@ public class PostServiceImpl implements PostService{
 
 	@Override
 	@Transactional
-	public int deletePost(int postId) {
-	    Post existing = pDao.getPostById(postId);
+	public int deletePost(int postNo) {
+	    Post existing = pDao.getPostByPostNo(postNo);
 	    if (existing == null || existing.isDeleted()) {
 	        throw new RecordNotFoundException("존재하지 않거나 이미 삭제된 게시글입니다.");
 	    }
-	    return pDao.logicalDeletePost(postId);
+	    return pDao.logicalDeletePost(postNo);
 	}
 
 }

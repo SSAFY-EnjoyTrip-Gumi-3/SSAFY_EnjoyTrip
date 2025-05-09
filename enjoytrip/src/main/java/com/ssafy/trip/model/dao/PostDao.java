@@ -21,10 +21,10 @@ public interface PostDao {
 
     /**
      * 특정 게시글 상세 정보를 조회합니다.
-     * @param postId 게시글 ID
+     * @param postNo 게시글 no
      * @return 게시글 상세 정보 (Post DTO)
      */
-    Post getPostById(int postId);
+    Post getPostByPostNo(int postNo);
 
     /**
      * 게시글을 DB에 삽입합니다.
@@ -45,5 +45,5 @@ public interface PostDao {
      * @param postId 삭제할 게시글 ID
      * @return      DELETE된 행 수(성공=1)  
      */
-    int logicalDeletePost(int postId);
+    int logicalDeletePost(int postNo);
 }  

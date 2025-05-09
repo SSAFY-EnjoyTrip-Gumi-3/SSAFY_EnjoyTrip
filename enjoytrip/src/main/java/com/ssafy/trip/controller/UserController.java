@@ -79,6 +79,7 @@ public class UserController implements RestControllerHelper{
 	    int userNo = loginUser.getUserNo();
 	    User user = User.builder()
 	            .userNo(userNo)
+	            .id(loginUser.getId())
 	            .password(req.getPassword())
 	            .email(req.getEmail())
 	            .name(req.getName())

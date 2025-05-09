@@ -7,10 +7,11 @@
     <!-- 게시글 상세 조회용 ResultMap -->
     <resultMap id="postMap" type="com.ssafy.trip.model.dto.Post">
         <id property="postNo" column="post_no" />
-        <result property="userId" column="user_id" />
+        <result property="userNo" column="user_no" />
         <result property="title" column="title" />
         <result property="content" column="content" />
         <result property="postType" column="post_type" />
+        <result property="writer" column="writer" />
         <result property="createdAt" column="created_at" />
         <result property="updatedAt" column="updated_at" />
         <result property="isDeleted" column="is_deleted" />
@@ -20,29 +21,30 @@
     <resultMap id="postListMap" type="com.ssafy.trip.model.dto.PostList">
         <id property="postNo" column="post_no" />
         <result property="title" column="title" />
-        <result property="writer" column="user_id" />
+        <result property="writer" column="user_no" />
         <result property="createdAt" column="created_at" />
     </resultMap>
 
     <!-- 게시글 전체 목록 (is_deleted = 0) -->
     <select id="getAllPosts" resultMap="postListMap">
-        SELECT post_no, title, user_id, created_at
+        SELECT post_no, title, user_no, created_at
         FROM posts
         WHERE is_deleted = 0
         ORDER BY created_at DESC
     </select>
 
     <!-- 게시글 상세 조회 -->
-    <select id="getPostById" resultMap="postMap">
-        SELECT *
-        FROM posts
-        WHERE post_no = #{postId}
-    </select>
+	<select id="getPostById" resultMap="postMap">
+    	SELECT p.*, u.name AS writer
+    	FROM posts p
+    	JOIN users u ON p.user_no = u.user_no
+    	WHERE p.post_no = #{postNo}
+	</select>
 
     <!-- 게시글 등록 -->
     <insert id="insertPost" parameterType="Post" useGeneratedKeys="true" keyProperty="postNo">
-        INSERT INTO posts (user_id, title, content, post_type)
-        VALUES (#{userId}, #{title}, #{content}, #{postType})
+        INSERT INTO posts (user_no, title, content, post_type)
+        VALUES (#{userNo}, #{title}, #{content}, #{postType})
     </insert>
 
     <!-- 게시글 수정 -->
@@ -56,7 +58,7 @@
     <update id="logicalDeletePost">
         UPDATE posts
         SET is_deleted = 1, updated_at = CURRENT_TIMESTAMP
-        WHERE post_no = #{postId}
+        WHERE post_no = #{postNo}
     </update>
 
 </mapper>

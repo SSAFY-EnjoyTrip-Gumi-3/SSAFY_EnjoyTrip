@@ -1,5 +1,0 @@
-package com.ssafy.trip.model.dao;
-
-public interface ArticleDao {
-
-}

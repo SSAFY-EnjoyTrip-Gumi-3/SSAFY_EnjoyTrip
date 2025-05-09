@@ -12,7 +12,7 @@ public interface CommentService {
      * @param postId 게시글 ID
      * @return 댓글 응답 DTO 리스트
      */
-    List<CommentResponse> getCommentsByPostId(int postId);
+    List<CommentResponse> getCommentsByPostNo(int postNo);
 
     /**
      * 댓글을 작성합니다.

@@ -15,7 +15,7 @@ public class CommentResponse {
     private int commentNo;
 
     @Schema(description = "게시글 번호", example = "42")
-    private int postId;
+    private int postNo;
 
     @Schema(description = "작성자 ID", example = "ssafyUser")
     private String writer;
@@ -24,7 +24,7 @@ public class CommentResponse {
     private String content;
 
     @Schema(description = "부모 댓글 번호 (없으면 0 또는 null)", example = "0")
-    private Integer parentId;
+    private Integer parentNo;
 
     @Schema(description = "댓글 작성 시간", example = "2024-05-07 10:32")
     private String createdAt;

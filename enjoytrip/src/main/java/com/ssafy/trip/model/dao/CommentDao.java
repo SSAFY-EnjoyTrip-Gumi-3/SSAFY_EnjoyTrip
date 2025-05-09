@@ -9,6 +9,6 @@ import com.ssafy.trip.model.dto.CommentResponse;
 @Mapper
 public interface CommentDao {
 	
-	List<CommentResponse> getCommentsByPostId(int postId);
+	List<CommentResponse> getCommentsByPostNo(int postNo);
 	
 }
