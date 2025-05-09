@@ -91,4 +91,5 @@ public interface UserDao {
 
     /** 탈퇴(DELETED) 회원 목록 조회 */
     List<User> selectDeleteUsers();
+    
 }
