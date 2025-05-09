@@ -1,0 +1,65 @@
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.trip.model.dao.LikeDao">
+
+	<select id="countLikesByAttraction" resultType="long">
+		select count(*)
+		from place_group_items
+		where attraction_no = #{attractionNo}
+	</select>
+	
+	<insert id="insertLike">
+		insert into place_group_items(group_no, attracion_no)
+		values (
+		(select group_no 
+		from place_groups
+		where user_no=#{userNo}
+		<if test="groupName != null and groupName != ''">
+			and group_name = #{groupName}
+		</if>
+		), #{attractionNo})
+	</insert>
+	
+	<delete id="deleteLike">
+		delete from place_group_items
+		where attraction_no = #{attractionNo}
+		and group_no in (
+			select group_no
+			from place_groups
+			where user_no = #{userNo}
+			<if test="groupName != null and groupName != ''">
+				and group_name = #{groupName}
+			</if>
+		)
+	</delete>
+	
+	<select id="existsLike">
+		select count(*)
+		from place_group_items pgi
+		join place_groups pg on pgi.group_no = pg.group_no
+		<where>
+			pg.user_no = #{userNo}
+			pgi.attraction_no = #{attractionNo}
+			<if test="groupName != null and groupName != ''">
+				and pg.group_name - #{groupName}
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectLikedAttractions" resultMap="com.ssafy.trip.model.dao.AttractionDao.attractionMap">
+		select a.*
+		from place_groups pg
+		join place_group_items pgi on pg.group_no = pgi.group_no
+		join attraction a on pgi.attraction_no = a.attraction_no
+		<where>
+			pg.user_no = #{userNo}
+			<if test="groupName != null and !groupName.isEmpty()">
+				and pg.group_name in
+				<foreach item="g" collection="groupName" open="(" separator="," close=")">
+					#{g}
+				</foreach>
+			</if>
+		</where>
+	</select>
+</mapper>
