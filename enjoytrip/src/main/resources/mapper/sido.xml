@@ -2,7 +2,14 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssafy.trip.model.dao.SidoDao">
-	<select id="getAll">
+	
+	<resultMap id="SidoMap" type="com.ssafy.trip.model.dto.Sido">
+	<id column="sido_no" property="sidoNo"/>
+	<result column="sido_code" property="sidoCode"/>
+	<result column="sido_name" property="sidoName"/>
+	</resultMap>
+	
+	<select id="getAll" resultMap="SidoMap">
 		select *
 		from sidos
 	</select>

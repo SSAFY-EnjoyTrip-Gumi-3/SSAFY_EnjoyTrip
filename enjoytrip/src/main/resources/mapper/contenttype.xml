@@ -2,8 +2,14 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssafy.trip.model.dao.ContentTypeDao">
-	<select id="getAll">
-		select distinct(content_type_id), content_type_name
+	
+	<resultMap id="ContentTypeMap" type="com.ssafy.trip.model.dto.ContentType">
+		<id column="content_type_no" property="contentTypeNo"/>
+		<result column="content_type_name" property="contentTypeName"></result>
+	</resultMap>
+	
+	<select id="getAll" resultMap="ContentTypeMap">
+		select distinct(content_type_no), content_type_name
 		from contenttypes
 	</select>
 	
