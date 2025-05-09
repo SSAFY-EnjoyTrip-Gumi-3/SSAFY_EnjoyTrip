@@ -19,7 +19,7 @@ public class UpdateRequest {
     @Email
     private String email;
 
-    @Schema(description = "이름(선택)", example = "손근영")
+    @Schema(description = "이름(선택)", example = "김싸피")
     private String name;
 
     @Schema(description = "생년월일(선택, YYYY-MM-DD)", example = "1995-08-17")

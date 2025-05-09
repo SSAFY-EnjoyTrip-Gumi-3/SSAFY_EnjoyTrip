@@ -16,6 +16,7 @@ import com.ssafy.trip.model.dto.SignupRequest;
 import com.ssafy.trip.model.dto.UpdateRequest;
 import com.ssafy.trip.model.dto.User;
 import com.ssafy.trip.model.dto.UserResponse;
+import com.ssafy.trip.security.AuthContext;
 import com.ssafy.trip.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,6 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserController implements RestControllerHelper{
 
 	private final UserService uService;
+	private final AuthContext authContext;
 
 	@Operation(summary = "회원 가입", description = "ID/비밀번호‧이메일 등을 받아 신규 회원을 등록합니다.")
     @ApiResponses({
@@ -73,7 +75,7 @@ public class UserController implements RestControllerHelper{
     @ApiResponse(responseCode = "200", description = "수정 완료")
 	@PutMapping("/me")
 	public ResponseEntity<?> update(@Valid @RequestBody UpdateRequest req, HttpSession session) {
-	    UserResponse loginUser = (UserResponse) session.getAttribute("loginUser");
+		UserResponse loginUser = authContext.getCurrentUser(session);
 	    if (loginUser == null) throw new AuthException("로그인이 필요합니다.");
 
 	    int userNo = loginUser.getUserNo();
@@ -108,7 +110,7 @@ public class UserController implements RestControllerHelper{
     @ApiResponse(responseCode = "200", description = "로그인 사용자의 프로필 반환")
 	@GetMapping("/me")
 	public ResponseEntity<?> detail(HttpSession session) {
-	    UserResponse loginUser = (UserResponse) session.getAttribute("loginUser");
+	    UserResponse loginUser = authContext.getCurrentUser(session);
 	    if (loginUser == null) throw new AuthException("로그인이 필요합니다.");
 	    return handleSuccess(loginUser);
 	}
@@ -118,7 +120,7 @@ public class UserController implements RestControllerHelper{
     @ApiResponse(responseCode = "204", description = "탈퇴 완료")
 	@DeleteMapping("/me")
 	public ResponseEntity<?> delete(HttpSession session) {
-	    UserResponse loginUser = (UserResponse) session.getAttribute("loginUser");
+		UserResponse loginUser = authContext.getCurrentUser(session);
 	    if (loginUser == null) throw new AuthException("로그인이 필요합니다.");
 
 	    uService.deleteUser(loginUser.getUserNo());

@@ -82,7 +82,7 @@
 
     <!-- ======================== 마지막 로그인 시각 ======================== -->
     <update id="updateLastLogin">
-        UPDATE users SET regdate = NOW()
+        UPDATE users SET last_login = NOW()
         WHERE user_no = #{userNo}
     </update>
 

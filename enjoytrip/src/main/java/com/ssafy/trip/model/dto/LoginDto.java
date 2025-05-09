@@ -11,11 +11,11 @@ import lombok.Setter;
 @Getter @Setter
 public class LoginDto {
 
-    @Schema(description = "로그인 ID", example = "testId", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "로그인 ID", example = "user1", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank
     private String id;
 
-    @Schema(description = "평문 비밀번호", example = "Passw!", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "평문 비밀번호", example = "pass1", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank
     private String password;
 }
