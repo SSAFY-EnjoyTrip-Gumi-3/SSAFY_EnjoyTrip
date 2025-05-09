@@ -17,10 +17,9 @@ public interface CommentService {
     /**
      * 댓글을 작성합니다.
      * @param request 댓글 작성 요청 DTO
-     * @param writer 작성자 ID (세션 또는 토큰 기반)
      * @return 등록된 댓글의 고유 번호
      */
-    int writeComment(CommentRequest request, String writer);
+    int createComment(CommentRequest request);
 
     /**
      * 댓글을 삭제합니다. (논리 삭제 또는 실제 삭제 여부는 구현에 따라 다름)
@@ -28,5 +27,12 @@ public interface CommentService {
      * @param userId 요청한 사용자 ID
      * @return 삭제된 개수
      */
-    int deleteComment(int commentId, String userId);
+    int deleteComment(int commentNo, int userNo);
+    
+    /**
+     * 댓글을 수정합니다.
+     * @param request 댓글 요청 DTO
+     * @return 수정된 개수
+     */
+    int updateComment(CommentRequest request, int userNo);
 }

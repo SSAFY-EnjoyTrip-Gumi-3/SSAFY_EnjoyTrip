@@ -4,16 +4,25 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.trip.model.dto.Post;
 import com.ssafy.trip.model.dto.PostList;
+import com.ssafy.trip.security.AuthContext;
 import com.ssafy.trip.service.PostService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -24,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 public class PostController implements RestControllerHelper {
 
     private final PostService pService;
+    private final AuthContext authContext;
 
     @Operation(summary = "게시글 목록 조회", description = "삭제되지 않은 게시글들을 모두 조회합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공")
@@ -58,8 +68,8 @@ public class PostController implements RestControllerHelper {
         @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글")
     })
     @PutMapping
-    public ResponseEntity<?> update(@Valid @RequestBody Post post) {
-        pService.updatePost(post);
+    public ResponseEntity<?> update(@Valid @RequestBody Post post, HttpSession session) {
+        pService.updatePost(post, authContext.getCurrentUserNo(session));
         return handleSuccess("게시글이 수정되었습니다.");
     }
 
@@ -69,8 +79,8 @@ public class PostController implements RestControllerHelper {
         @ApiResponse(responseCode = "404", description = "이미 삭제되었거나 존재하지 않는 게시글")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable int id) {
-        pService.deletePost(id);
+    public ResponseEntity<?> delete(@PathVariable int id, HttpSession session) {
+        pService.deletePost(id, authContext.getCurrentUserNo(session));
         return handleSuccess("게시글이 삭제되었습니다.");
     }
 }  

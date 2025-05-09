@@ -34,7 +34,7 @@
     </select>
 
     <!-- 게시글 상세 조회 -->
-	<select id="getPostById" resultMap="postMap">
+	<select id="getPostByPostNo" resultMap="postMap">
     	SELECT p.*, u.name AS writer
     	FROM posts p
     	JOIN users u ON p.user_no = u.user_no
