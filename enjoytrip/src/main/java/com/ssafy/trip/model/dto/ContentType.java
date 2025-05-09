@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class ContentType {
 
     @Schema(description = "콘텐츠 타입 ID (TourAPI code)", example = "12")
-    private int contentTypeId;          // 12=관광지 · 14=문화시설 · 15=축제/공연/행사 …
+    private int contentTypeNo;          // 12=관광지 · 14=문화시설 · 15=축제/공연/행사 …
 
     @Schema(description = "콘텐츠 타입 이름", example = "관광지")
     private String contentTypeName;

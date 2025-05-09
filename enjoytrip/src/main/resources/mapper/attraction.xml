@@ -5,9 +5,9 @@
 
 	<resultMap type="Attraction" id="attractionMap">
 	<id column="attraction_no" property="attractionNo"/>
-	<result column="content_id" property="contentId"/>
+	<result column="content_no" property="contentNo"/>
 	<result column="title" property="title"/>
-	<result column="content_type_id" property="contentType"/>
+	<result column="content_type_no" property="contentType"/>
 	<result column="area_code" property="areaCode"/>
 	<result column="si_gun_gu_code" property="siGunGuCode"/>
 	<result column="first_image1" property="image1"/>
@@ -23,12 +23,12 @@
 	</resultMap>
 	
 	<insert id="insertAttraction" useGeneratedKeys="true">
-		INSERT INTO attractions (attraction_no, content_id, content_type_id, area_code, si_gun_gu_code, title, first_image1, first_image2, map_level, latitude, longitude, tel, addr1, addr2, homepage, overview)
-		VALUES (#{attractionNo}, #{contentId}, #{contentTypeId}, #{areaCode}, #{siGunGuCode}, #{title}, #{firstImage1}, #{firstImage2}, #{mapLevel}, #{latitude}, #{longitude}, #{tel}, #{addr1}, #{addr2}, #{homepage}, #{overview});
+		INSERT INTO attractions (attraction_no, content_no, content_type_no, area_code, si_gun_gu_code, title, first_image1, first_image2, map_level, latitude, longitude, tel, addr1, addr2, homepage, overview)
+		VALUES (#{attractionNo}, #{contentNo}, #{contentType}, #{areaCode}, #{siGunGuCode}, #{title}, #{firstImage1}, #{firstImage2}, #{mapLevel}, #{latitude}, #{longitude}, #{tel}, #{addr1}, #{addr2}, #{homepage}, #{overview});
 	</insert>
 	
 	<select id="getAttractionByArea" resultMap="attractionMap">
-		select attraction_no, content_id, content_type_id, area_code, si_gun_gu_code, title, first_image1, first_image2, map_level, latitude, longitude, tel, addr1, addr2, homepage, overview
+		select attraction_no, content_no, content_type_no, area_code, si_gun_gu_code, title, first_image1, first_image2, map_level, latitude, longitude, tel, addr1, addr2, homepage, overview
 		from attractions
 		where si_gun_gu_code=#{siGunGuCode}
 		and area_code=#{areaCode}
@@ -37,7 +37,7 @@
 	
 	<select id="getAttractionByContentType" resultMap="attractionMap">
 		select * from attractions
-		where content_type_id=#{contentTypeId}
+		where content_type_no=#{contentType}
 	</select>
 	
 	<select id="getAttractionByNo" resultMap="attractionMap">
@@ -51,7 +51,7 @@
 		where area_code=#{areaCode}
 		and si_gun_gu_code=#{siGunGuCode}
 		 <if test="contentTypeIds != null and contentTypeIds.size() &gt; 0">
-       		and content_type_id IN
+       		and content_type_no IN
        	<foreach collection="contentTypeIds"
                 item="type"
                 open="("
