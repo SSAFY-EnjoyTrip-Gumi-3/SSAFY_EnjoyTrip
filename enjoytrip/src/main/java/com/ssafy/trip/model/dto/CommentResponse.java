@@ -23,7 +23,7 @@ public class CommentResponse {
     @Schema(description = "댓글 내용", example = "정말 유익한 글입니다!")
     private String content;
 
-    @Schema(description = "부모 댓글 번호 (없으면 0 또는 null)", example = "0")
+    @Schema(description = "부모 댓글 번호 (없으면 null)", example = "1")
     private Integer parentNo;
 
     @Schema(description = "댓글 작성 시간", example = "2024-05-07 10:32")

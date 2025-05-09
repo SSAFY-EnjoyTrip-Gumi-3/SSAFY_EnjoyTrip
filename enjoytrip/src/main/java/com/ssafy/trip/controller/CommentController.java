@@ -12,6 +12,6 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1/comments")
 @RequiredArgsConstructor
 @Tag(name = "Comment", description = "댓글 작성/조회/수정/삭제 API")
-public class CommentController {
+public class CommentController implements RestControllerHelper{
 
 }
