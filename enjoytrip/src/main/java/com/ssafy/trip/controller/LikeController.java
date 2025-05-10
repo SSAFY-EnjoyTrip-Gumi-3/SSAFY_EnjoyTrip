@@ -1,8 +1,5 @@
 package com.ssafy.trip.controller;
 
-import java.util.Collections;
-import java.util.Map;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,8 +37,8 @@ public class LikeController implements RestControllerHelper{
 			 description = "관광지의 현재 좋아요 개수를 반환합니다.")
 	@ApiResponse(responseCode = "200", description = "성공적으로 좋아요 개수 결과 반환")
 	@GetMapping("/{attractionNo}")
-	public ResponseEntity<Map<String, Long>> getLikeCount(@PathVariable int attractionNo){
+	public ResponseEntity<Long> getLikeCount(@PathVariable int attractionNo){
 		long count = lService.getLikeCount(attractionNo);
-		return ResponseEntity.ok(Collections.singletonMap("count", count));
+		return ResponseEntity.ok(count);
 	}
 }

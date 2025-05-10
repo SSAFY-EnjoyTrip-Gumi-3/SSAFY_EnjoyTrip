@@ -1,6 +1,7 @@
 package com.ssafy.trip.model.dao;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface LikeDao {
@@ -11,7 +12,9 @@ public interface LikeDao {
      * @param attractionNo 좋아요 수를 계산할 관광지의 식별자
      * @return 해당 attractionNo에 기록된 좋아요 행의 개수 (long)
      */
-	long countLikesByAttraction(int attractionNo);
+	long countLikesByAttraction(
+			@Param("attractionNo") int attractionNo
+			);
 	
 	/**
 	* 사용자가 특정 관광지에 좋아요를 추가(INSERT)합니다.
@@ -20,7 +23,11 @@ public interface LikeDao {
 	* @param attractionNo 좋아요 대상 관광지의 식별자
 	* @return 삽입된 행(row)의 수 (성공 시 1)
 	*/
-	int insertLike(int userNo, int attractionNo);
+	int insertLike(
+			@Param("userNo") int userNo, 
+			@Param("attractionNo") int attractionNo,
+			@Param("groupName") String groupName
+			);
 	
 	/**
      * 사용자가 특정 관광지에 눌렀던 좋아요를 취소(DELETE)합니다.
@@ -29,7 +36,11 @@ public interface LikeDao {
      * @param attractionNo 좋아요 취소 대상 관광지의 식별자
      * @return 삭제된 행(row)의 수 (성공 시 1)
      */
-	int deleteLike(int userNo, int attractionNo);
+	int deleteLike(
+			@Param("userNo") int userNo, 
+			@Param("attractionNo") int attractionNo,
+			@Param("groupName") String groupName
+			);
 	
 	/**
      * 사용자가 이미 해당 관광지에 좋아요를 눌렀는지 확인합니다.
@@ -38,5 +49,9 @@ public interface LikeDao {
      * @param attractionNo 확인할 관광지의 식별자
      * @return 존재하는 좋아요 레코드 수 (0이면 없음, >0이면 이미 좋아요 상태)
      */
-	int existsLike(int userNo, int attractionNo);
+	int existsLike(
+			@Param("userNo") int userNo, 
+			@Param("attractionNo") int attractionNo,
+			@Param("groupName") String groupName
+			);
 }

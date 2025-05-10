@@ -17,9 +17,12 @@ public class LikeRequestDTO {
 	@Schema(description = "user 식별 번호", example = "1")
 	private int userNo;
 	
-	@Schema(description = "관광지 식별 번호", example = "15")
+	@Schema(description = "관광지 식별 번호", example = "56644")
 	private int attractionNo;
 	
 	@Schema(description = "좋아요 상태", example = "true")
 	private boolean like;
+	
+	@Schema(description = "사용자가 지정한 좋아요 그룹이름", example = "hotplace")
+	private String groupName;
 }
