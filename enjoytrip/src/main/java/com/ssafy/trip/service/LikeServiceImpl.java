@@ -22,11 +22,11 @@ public class LikeServiceImpl implements LikeService {
 	@Override
 	@Transactional
 	public LikeResponseDTO toggleLike(LikeRequestDTO req) {
-		boolean curLike = lDao.existsLike(req.getUserNo(), req.getAttractionNo()) > 0;
+		boolean curLike = lDao.existsLike(req.getUserNo(), req.getAttractionNo(), req.getGroupName()) > 0;
 		if (req.isLike() && !curLike) {
-			lDao.insertLike(req.getUserNo(), req.getAttractionNo());
+			lDao.insertLike(req.getUserNo(), req.getAttractionNo(), req.getGroupName());
 		}else if (!req.isLike() && curLike) {
-			lDao.deleteLike(req.getUserNo(), req.getAttractionNo());
+			lDao.deleteLike(req.getUserNo(), req.getAttractionNo(), req.getGroupName());
 		}
 		
 		long cnt = lDao.countLikesByAttraction(req.getAttractionNo());

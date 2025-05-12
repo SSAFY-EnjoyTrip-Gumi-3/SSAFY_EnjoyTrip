@@ -3,59 +3,60 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssafy.trip.model.dao.LikeDao">
 
+	<!-- 좋아요 수 집계  -->
 	<select id="countLikesByAttraction" resultType="long">
-		select count(*)
-		from place_group_items
-		where attraction_no = #{attractionNo}
+		SELECT COUNT(*)
+		FROM place_group_items
+		WHERE attraction_no = #{attractionNo}
 	</select>
 	
+	<!-- 좋아요 추가 -->
 	<insert id="insertLike">
-		insert into place_group_items(group_no, attracion_no)
-		values (
-		(select group_no 
-		from place_groups
-		where user_no=#{userNo}
-		<if test="groupName != null and groupName != ''">
-			and group_name = #{groupName}
-		</if>
-		), #{attractionNo})
+		INSERT INTO place_group_items(group_no, attraction_no)
+			SELECT pg.group_no, #{attractionNo}
+      		FROM place_groups pg
+    		WHERE pg.user_no = #{userNo}
+       		AND pg.group_name = #{groupName}
 	</insert>
 	
+	<!-- 좋아요 취소 -->
 	<delete id="deleteLike">
-		delete from place_group_items
-		where attraction_no = #{attractionNo}
-		and group_no in (
-			select group_no
-			from place_groups
-			where user_no = #{userNo}
+		DELETE FROM place_group_items
+		WHERE attraction_no = #{attractionNo}
+		AND group_no = (
+			SELECT group_no
+			FROM place_groups
+			WHERE user_no = #{userNo}
 			<if test="groupName != null and groupName != ''">
-				and group_name = #{groupName}
+				AND group_name = #{groupName}
 			</if>
 		)
 	</delete>
 	
+	<!-- 좋아요 존재 여부 확인 -->
 	<select id="existsLike">
-		select count(*)
-		from place_group_items pgi
-		join place_groups pg on pgi.group_no = pg.group_no
+		SELECT count(*)
+		FROM place_group_items pgi
+		JOIN place_groups pg ON pgi.group_no = pg.group_no
 		<where>
 			pg.user_no = #{userNo}
-			pgi.attraction_no = #{attractionNo}
+		 	AND pgi.attraction_no = #{attractionNo}
 			<if test="groupName != null and groupName != ''">
-				and pg.group_name - #{groupName}
+				AND pg.group_name = #{groupName}
 			</if>
 		</where>
 	</select>
 	
+	<!-- 다중 그룹으로 조회 예시 -->
 	<select id="selectLikedAttractions" resultMap="com.ssafy.trip.model.dao.AttractionDao.attractionMap">
-		select a.*
-		from place_groups pg
-		join place_group_items pgi on pg.group_no = pgi.group_no
-		join attraction a on pgi.attraction_no = a.attraction_no
+		SELECT a.*
+		FROM place_groups pg
+		JOIN place_group_items pgi ON pg.group_no = pgi.group_no
+		JOIN attraction a ON pgi.attraction_no = a.attraction_no
 		<where>
 			pg.user_no = #{userNo}
 			<if test="groupName != null and !groupName.isEmpty()">
-				and pg.group_name in
+				AND pg.group_name IN
 				<foreach item="g" collection="groupName" open="(" separator="," close=")">
 					#{g}
 				</foreach>
