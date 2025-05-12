@@ -1,0 +1,22 @@
+<mapper namespace="com.ssafy.trip.model.dao.PlaceGroupDao">
+  <!-- 그룹 생성 -->
+  <insert id="insertPlaceGroup" useGeneratedKeys="true" keyProperty="groupNo">
+    INSERT INTO place_groups(user_no, group_name)
+    VALUES(#{userNo}, #{groupName})
+  </insert>
+
+  <!-- 사용자 그룹 조회 -->
+  <select id="selectGroupsByUser" resultType="com.ssafy.trip.model.dto.PlaceGroupDTO">
+    SELECT group_no, user_no, group_name, created_at
+      FROM place_groups
+     WHERE user_no = #{userNo}
+     ORDER BY created_at DESC
+  </select>
+
+  <!-- 그룹명 중복 확인 -->
+  <select id="existsGroupName" resultType="int">
+    SELECT COUNT(*) FROM place_groups
+     WHERE user_no = #{userNo}
+       AND group_name = #{groupName}
+  </select>
+</mapper>
