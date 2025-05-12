@@ -1,10 +1,21 @@
 package com.ssafy.trip.model.dao;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.ssafy.trip.model.dto.PopularAttractionDTO;
+
 @Mapper
 public interface LikeDao {
+	
+	/**
+	 * 전체 관광지(attractionNo)중에서 좋아요 많은 순서대로 정렬한 결과를 반환합니다.
+	 * 
+	 * @return 좋아요가 많은 순서대로 정렬된 관광지 정보 반환
+	 * */
+	List<PopularAttractionDTO> selectPopularAttractions();
 	
 	/**
      * 특정 관광지(attractionNo)에 대한 총 좋아요(Like) 수를 반환합니다.
