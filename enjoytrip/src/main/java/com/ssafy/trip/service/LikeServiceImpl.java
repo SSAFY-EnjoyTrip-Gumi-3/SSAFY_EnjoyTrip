@@ -1,9 +1,12 @@
 package com.ssafy.trip.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.trip.model.dao.LikeDao;
+import com.ssafy.trip.model.dto.PopularAttractionDTO;
 import com.ssafy.trip.model.dto.LikeRequestDTO;
 import com.ssafy.trip.model.dto.LikeResponseDTO;
 
@@ -31,5 +34,11 @@ public class LikeServiceImpl implements LikeService {
 		
 		long cnt = lDao.countLikesByAttraction(req.getAttractionNo());
 		return new LikeResponseDTO(req.getAttractionNo(), cnt, req.isLike());
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<PopularAttractionDTO> getPopularAttractions() {
+		return lDao.selectPopularAttractions();
 	}
 }

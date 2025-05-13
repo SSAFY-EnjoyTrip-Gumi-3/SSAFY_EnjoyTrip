@@ -1,5 +1,7 @@
 package com.ssafy.trip.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.trip.model.dto.PopularAttractionDTO;
 import com.ssafy.trip.model.dto.LikeRequestDTO;
 import com.ssafy.trip.model.dto.LikeResponseDTO;
 import com.ssafy.trip.service.LikeService;
@@ -40,5 +43,14 @@ public class LikeController implements RestControllerHelper{
 	public ResponseEntity<Long> getLikeCount(@PathVariable int attractionNo){
 		long count = lService.getLikeCount(attractionNo);
 		return ResponseEntity.ok(count);
+	}
+	
+	@Operation(summary = "좋아요 많은 순으로 정렬된 관광지 정보",
+			description = "정렬된 관광지 정보를 반환합니다.")
+	@ApiResponse(responseCode = "200", description = "성공적으로 정렬된 관광지 정보 반환")
+	@GetMapping("/popular")
+	public ResponseEntity<List<PopularAttractionDTO>> getPopularAttractions(){
+		List<PopularAttractionDTO> list = lService.getPopularAttractions();
+		return ResponseEntity.ok(list);
 	}
 }

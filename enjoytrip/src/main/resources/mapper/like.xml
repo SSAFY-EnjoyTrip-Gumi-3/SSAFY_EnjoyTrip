@@ -63,4 +63,32 @@
 			</if>
 		</where>
 	</select>
+	
+  <resultMap id="PopularAttractionMap" type="com.ssafy.trip.model.dto.PopularAttractionDTO">
+    <id column="attraction_no"        property="attractionNo"/>
+    <result column="title"            property="title"/>
+    <result column="first_image1"     property="firstImage1"/>
+    <result column="latitude"         property="latitude"/>
+    <result column="longitude"        property="longitude"/>
+    <result column="like_count"       property="likeCount"/>
+    <result column="overview"       property="overview"/>
+    <result column="addr1"       property="addr1"/>
+  </resultMap>
+
+  <select id="selectPopularAttractions" resultMap="PopularAttractionMap">
+    SELECT 
+      a.attraction_no,
+      a.title,
+      a.first_image1,
+      a.latitude,
+      a.longitude,
+      a.overview,
+      a.addr1,
+      COUNT(pgi.attraction_no) AS like_count
+    FROM place_group_items pgi
+    JOIN attractions a
+      ON pgi.attraction_no = a.attraction_no
+    GROUP BY a.attraction_no, a.title, a.first_image1, a.latitude, a.longitude, a.overview, a.addr1
+    ORDER BY like_count DESC
+  </select>
 </mapper>
