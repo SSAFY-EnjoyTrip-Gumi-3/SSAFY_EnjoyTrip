@@ -1,0 +1,89 @@
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.trip.model.dao.PlanDao">
+
+    <!-- 여행 계획 등록: 생성된 plan_no는 PlanInsertParam.planNo에 주입됨 -->
+    <insert id="insertPlan" parameterType="PlanInsertParam"
+            useGeneratedKeys="true" keyProperty="planNo">
+        INSERT INTO plans (user_no, title, created_at)
+        VALUES (#{userNo}, #{title}, NOW())
+    </insert>
+
+    <!-- 특정 계획에 속한 관광지들 일괄 삽입 -->
+    <insert id="insertPlanAttractions">
+        INSERT INTO plan_attractions (plan_no, attraction_no, day, sequence)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{planNo}, #{item.attractionNo}, #{item.day}, #{item.sequence})
+        </foreach>
+    </insert>
+
+    <!-- 사용자의 전체 계획 목록 조회 (attractions는 생략) -->
+    <select id="getPlanByNo" resultMap="planResponseMap">
+   		SELECT 
+        	p.plan_no, 
+        	p.user_no,                          
+        	p.title, 
+        	p.created_at,
+        	a.attraction_no, 
+        	a.title AS attractionTitle, 
+        	a.addr1, 
+        	a.latitude, 
+        	a.longitude,
+        	pa.day, 
+        	pa.sequence
+    	FROM plans p
+    	LEFT JOIN plan_attractions pa ON p.plan_no = pa.plan_no
+    	LEFT JOIN attractions a ON pa.attraction_no = a.attraction_no
+    	WHERE p.plan_no = #{planNo}
+    		ORDER BY pa.day ASC, pa.sequence ASC
+	</select>
+	
+
+	<select id="getPlansByUser" resultType="com.ssafy.trip.model.dto.PlanResponse">
+    	SELECT plan_no AS planNo,
+    	       user_no AS userNo,
+    	       title,
+    	       created_at AS createdAt
+    	FROM plans
+    	WHERE user_no = #{userNo}
+    	ORDER BY created_at DESC
+	</select>
+	
+	
+
+    <resultMap id="planResponseMap" type="PlanResponse">
+        <id property="planNo" column="plan_no"/>
+        <result property="userNo" column="user_no"/>
+        <result property="title" column="title"/>
+        <result property="createdAt" column="created_at"/>
+
+        <collection property="attractions" ofType="com.ssafy.trip.model.dto.PlannedAttraction">
+    		<result property="day" column="day"/>
+   			<result property="sequence" column="sequence"/>
+
+    		<association property="attraction" javaType="com.ssafy.trip.model.dto.Attraction">
+        		<id property="attractionNo" column="attraction_no"/>
+        		<result property="title" column="title"/>
+        		<result property="addr1" column="addr1"/>
+        		<result property="latitude" column="latitude"/>
+        		<result property="longitude" column="longitude"/>
+    		</association>
+		</collection>
+    </resultMap>
+
+    <!-- 계획 삭제 -->
+    <delete id="deletePlan">
+        DELETE FROM plans WHERE plan_no = #{planNo}
+    </delete>
+    
+    <update id="updatePlanTitle">
+    	UPDATE plans SET title = #{title} WHERE plan_no = #{planNo}
+	</update>
+
+	<delete id="deletePlanAttractions">
+    	DELETE FROM plan_attractions WHERE plan_no = #{planNo}
+	</delete>
+    
+</mapper>

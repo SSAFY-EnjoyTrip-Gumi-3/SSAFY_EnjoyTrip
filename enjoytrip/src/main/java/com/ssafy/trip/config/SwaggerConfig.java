@@ -55,6 +55,12 @@ public class SwaggerConfig {
     }
     
     @Bean
+    GroupedOpenApi planOpenApi() {
+        String[] paths = { "/api/v1/plans/**" };
+        return GroupedOpenApi.builder().group("Plan 관련 API").pathsToMatch(paths).build();
+    }
+    
+    @Bean
     GroupedOpenApi otherOpenApi() {
         String[] paths = { "/api/etc/**" };
         return GroupedOpenApi.builder().group("기타 API").pathsToMatch(paths).build();
