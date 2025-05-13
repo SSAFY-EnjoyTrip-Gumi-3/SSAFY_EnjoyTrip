@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @Builder
 public class User {
 
-    @Schema(description = "사용자 PK", example = "7")
+    @Schema(description = "사용자 PK", example = "4")
     private int userNo;
 
     @Schema(description = "로그인 ID", example = "testId")
