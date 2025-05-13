@@ -68,4 +68,15 @@ public class PlanController implements RestControllerHelper {
         planService.deletePlan(planNo, userNo);
         return handleSuccess("여행 계획이 삭제되었습니다.");
     }
+    
+    @Operation(summary = "여행 계획 수정", description = "여행 계획 제목과 일정을 수정합니다.")
+    @PutMapping("/{planNo}")
+    public ResponseEntity<?> update(@PathVariable int planNo,
+                                    @Valid @RequestBody PlanRequest request,
+                                    HttpSession session) {
+        int userNo = authContext.getCurrentUserNo(session);
+        planService.updatePlan(planNo, userNo, request);
+        return handleSuccess("여행 계획이 수정되었습니다.");
+    }
+
 }

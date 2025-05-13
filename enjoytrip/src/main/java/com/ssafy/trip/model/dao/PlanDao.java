@@ -56,4 +56,8 @@ public interface PlanDao {
      * @return 삭제된 행 수 (성공 시 1)
      */
     int deletePlan(int planNo);
+    
+    int updatePlanTitle(@Param("planNo") int planNo, @Param("title") String title);
+    int deletePlanAttractions(int planNo);
+
 }

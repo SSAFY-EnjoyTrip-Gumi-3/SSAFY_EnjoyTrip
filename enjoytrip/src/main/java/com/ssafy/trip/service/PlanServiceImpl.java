@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ssafy.trip.exception.AccessDeniedException;
 import com.ssafy.trip.exception.RecordNotFoundException;
 import com.ssafy.trip.model.dao.PlanDao;
 import com.ssafy.trip.model.dto.PlanAttractionRequest;
@@ -66,4 +67,34 @@ public class PlanServiceImpl implements PlanService {
         // TODO: 필요하면 userNo 비교 로직 추가 (권한 확인)
         return pDao.deletePlan(planNo);
     }
+    
+    @Override
+    @Transactional
+    public int updatePlan(int planNo, int userNo, PlanRequest request) {
+        PlanResponse existing = pDao.getPlanByNo(planNo);
+        if (existing == null) {
+            throw new RecordNotFoundException("해당 여행 계획을 찾을 수 없습니다.");
+        }
+
+        // 소유자 검증 (선택: PlanResponse에 userNo 포함 필요)
+         if (existing.getUserNo() != userNo) {
+             throw new AccessDeniedException("본인의 계획만 수정할 수 있습니다.");
+         }
+
+        // 1. 제목 수정
+        pDao.updatePlanTitle(planNo, request.getTitle());
+
+        // 2. 기존 관광지 일정 삭제
+        pDao.deletePlanAttractions(planNo);
+
+        // 3. 새 일정 삽입
+        List<PlanAttractionRequest> attractions = request.getAttractions();
+        if (attractions != null && !attractions.isEmpty()) {
+            return pDao.insertPlanAttractions(planNo, attractions);
+        }
+
+        return 0;
+    }
+
+    
 }

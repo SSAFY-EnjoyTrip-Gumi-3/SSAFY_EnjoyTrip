@@ -18,6 +18,9 @@ public class PlanResponse {
 
     @Schema(description = "계획 번호", example = "1")
     private int planNo;
+    
+    @Schema(description = "작성자 유저 번호", example = "1")
+    private int userNo;
 
     @Schema(description = "계획 제목", example = "제주도 3박 4일 여행")
     private String title;

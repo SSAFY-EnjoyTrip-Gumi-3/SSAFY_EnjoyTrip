@@ -44,4 +44,16 @@ public interface PlanService {
      * @return 삭제 성공 시 1, 실패 시 0
      */
     int deletePlan(int planNo, int userNo);
+    
+    /**
+     * 특정 여행 계획을 수정합니다.
+     * 수정 권한은 해당 계획의 소유자(userNo)만 가집니다.
+     *
+     * @param planNo 삭제할 계획의 번호
+     * @param userNo 현재 로그인한 사용자 번호
+     * @param request 계획 제목 및 관광지 목록이 담긴 요청 객체
+     * @return 수정 성공 시 1, 실패 시 0
+     */
+    int updatePlan(int planNo, int userNo, PlanRequest request);
+
 }
